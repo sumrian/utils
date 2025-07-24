@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>滚动同步 Demo</title>
+    <style>
+      .container {
+        padding: 20px;
+        position: relative;
+        height: 100vh;
+      }
+
+      .scroll-area-1 {
+        width: 500px;
+        height: 100px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+      }
+
+      .scroll-content-1 {
+        width: 1500px;
+        height: 100%;
+        background: linear-gradient(to right, #f0f0f0, #e0e0e0);
+      }
+
+      .control-area {
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 20px;
+        width: 150px;
+        background: linear-gradient(
+          to right,
+          #e6f7ff 0%,
+          #e6f7ff var(--scroll-percent, 0%),
+          #fff var(--scroll-percent, 0%),
+          #fff 100%
+        );
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: --scroll-percent 0.1s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="scroll-area-1">
+        <div class="scroll-content-1"></div>
+      </div>
+
+      <div class="control-area">
+        <h3>控制区域</h3>
+        <p>滚动进度: <span id="progress">0</span>%</p>
+      </div>
+    </div>
+
+    <script>
+      const scrollArea1 = document.querySelector('.scroll-area-1');
+      const controlArea = document.querySelector('.control-area');
+      const progressText = document.querySelector('#progress');
+
+      // 控制滚动速度的系数
+      const SCROLL_SPEED = 0.5;
+
+      // 更新背景进度
+      function updateProgress() {
+        const scrollPercent =
+          (scrollArea1.scrollLeft / (scrollArea1.scrollWidth - scrollArea1.clientWidth)) * 100;
+        controlArea.style.setProperty('--scroll-percent', `${scrollPercent}%`);
+        progressText.textContent = Math.round(scrollPercent);
+      }
+
+      // 监听控制区域的滚轮事件
+      controlArea.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        scrollArea1.scrollLeft += e.deltaY * SCROLL_SPEED;
+        updateProgress();
+      });
+
+      // 监听滚动区域的滚动事件
+      scrollArea1.addEventListener('scroll', updateProgress);
+
+      // 初始化进度
+      updateProgress();
+    </script>
+  </body>
+</html>
