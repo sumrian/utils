@@ -19,6 +19,7 @@
         white-space: nowrap;
         margin-bottom: 20px;
         border: 1px solid #ccc;
+        position: relative;
       }
 
       .scroll-content-1 {
@@ -27,13 +28,42 @@
         background: linear-gradient(to right, #f0f0f0, #e0e0e0);
       }
 
+      .scroll-wrapper {
+        position: relative;
+        display: inline-block;
+      }
+
       .control-area {
-        position: fixed;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        padding: 20px;
-        width: 150px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 24px;
+        height: 48px;
+        background: #ccc;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 24px 24px;
+        border-bottom-left-radius: 24px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        z-index: 10;
+        transition:
+          width 1s cubic-bezier(.4,2,.6,1),
+          height 1s cubic-bezier(.4,2,.6,1),
+          border-radius 1s cubic-bezier(.4,2,.6,1),
+          background 1s cubic-bezier(.4,2,.6,1),
+          border 1s cubic-bezier(.4,2,.6,1),
+          box-shadow 1s cubic-bezier(.4,2,.6,1);
+        overflow: hidden;
+      }
+      .control-area:hover {
+        width: 60px;
+        height: 60px;
+        right: 8px;
+        top: 8px;
         background: linear-gradient(
           to right,
           #e6f7ff 0%,
@@ -41,22 +71,54 @@
           #fff var(--scroll-percent, 0%),
           #fff 100%
         );
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: --scroll-percent 0.1s;
+        border-radius: 50%;
+        box-shadow: 0 4px 16px rgba(24, 144, 255, 0.18);
+        border: 2px solid #91d5ff;
+      }
+      .icon-arrow {
+        font-size: 1.1rem;
+        color: #666;
+        font-weight: bold;
+        user-select: none;
+        opacity: 1;
+        transition: opacity 0.2s;
+        z-index: 1;
+      }
+      .control-area:hover .icon-arrow {
+        opacity: 0;
+      }
+      .progress-icon {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #1890ff;
+        user-select: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+      }
+      .control-area:hover .progress-icon {
+        opacity: 1;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <div class="scroll-area-1">
-        <div class="scroll-content-1"></div>
-      </div>
-
-      <div class="control-area">
-        <h3>控制区域</h3>
-        <p>滚动进度: <span id="progress">0</span>%</p>
+      <div class="scroll-wrapper">
+        <div class="control-area">
+          <span class="icon-arrow">&lt;</span>
+          <span class="progress-icon" id="progress">0%</span>
+        </div>
+        <div class="scroll-area-1">
+          <div class="scroll-content-1"></div>
+        </div>
       </div>
     </div>
 
@@ -73,7 +135,7 @@
         const scrollPercent =
           (scrollArea1.scrollLeft / (scrollArea1.scrollWidth - scrollArea1.clientWidth)) * 100;
         controlArea.style.setProperty('--scroll-percent', `${scrollPercent}%`);
-        progressText.textContent = Math.round(scrollPercent);
+        progressText.textContent = Math.round(scrollPercent) + '%';
       }
 
       // 监听控制区域的滚轮事件
